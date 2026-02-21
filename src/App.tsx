@@ -1,6 +1,6 @@
 import "./App.css";
-import { Route, Routes } from "react-router";
+// import { Route, Routes } from "react-router";
 
 export function App() {
-  return <div className="App"></div>
+  return <div className="App"></div>;
 }
