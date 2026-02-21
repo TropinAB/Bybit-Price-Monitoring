@@ -3,12 +3,12 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const NODE_ENV = process.env.NODE_ENV || "production";
-const PREFIX = NODE_ENV === "production" ? "/JS-Template/" : "/";
+const PREFIX = NODE_ENV === "production" ? "/Weather-React/" : "/";
 
 module.exports = {
-  entry: "./src/index.ts",
+  entry: "./src/index.tsx",
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   output: {
     publicPath: PREFIX,
@@ -26,12 +26,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: "index.html",
       publicPath: PREFIX,
-      // template: "src/index.html",
+      template: './public/index.html',
     }),
     new HtmlWebpackPlugin({
       filename: "404.html",
       publicPath: PREFIX,
-      // template: "src/index.html",
+      template: './public/index.html',
     }),
     new webpack.DefinePlugin({
       PRODUCTION: NODE_ENV === "production",
