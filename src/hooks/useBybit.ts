@@ -3,12 +3,19 @@ import { useFetch } from "./useFetch";
 import { BybitResponse } from "../types/BybitResponse";
 import { BybitSystemStatuses } from "../types/BybitSystemStatus";
 import { BybitInstrument, BybitInstruments } from "../types/BybitInstruments";
+import {
+  BybitInstrumentInfo,
+  BybitInstrumentsInfo,
+} from "../types/BybitInstrumentInfo";
+
+// TODO подумать как разделить обновление только того, что меняется
 
 // category: spot/linear/inverse/option
 export function useBybit(
   category: string = "spot",
   baseCoin: string = "USDT",
   intervalMinutes: number = 1,
+  symbol: string = "",
 ) {
   const intervalMS = intervalMinutes * 60 * 1000;
   const [isOnline, setIsOnline] = useState(false);
@@ -54,6 +61,78 @@ export function useBybit(
     }));
   }
 
+  // Запрос детализации по Инструменту
+  const [triggerInstrumentDetails, setTriggerInstrumentDetails] = useState(0);
+  const {
+    // loading: loadingInstruments,
+    data: dataInstrumentDetails,
+    error: errorInstrumentDetails,
+    refetchData: refetchInstrumentDetails,
+  } = useFetch<BybitResponse<BybitInstrumentsInfo>, BybitInstrumentInfo>(
+    `https://api.bybit.com//v5/market/instruments-info?category=${category}&symbol=${symbol}`,
+    {
+      skipOnMount: true,
+      dataSelector: InstrumentInfoSelector,
+    },
+  );
+  function InstrumentInfoSelector(
+    response: BybitResponse<BybitInstrumentsInfo>,
+  ): BybitInstrumentInfo {
+    if (!response?.result?.list || response.result.list.length === 0)
+      return {} as BybitInstrumentInfo;
+    const item: BybitInstrumentInfo = response.result
+      .list[0] as BybitInstrumentInfo;
+    return {
+      symbol: item.symbol,
+      contractType: item.contractType,
+      status: item.status,
+      baseCoin: item.baseCoin,
+      quoteCoin: item.quoteCoin,
+      launchTime: item.launchTime && new Date(Number(item.launchTime)),
+      priceFilter: item.priceFilter && {
+        tickSize:
+          item.priceFilter.tickSize && Number(item.priceFilter.tickSize),
+        minPrice:
+          item.priceFilter.minPrice && Number(item.priceFilter.minPrice),
+        maxPrice:
+          item.priceFilter.maxPrice && Number(item.priceFilter.maxPrice),
+      },
+      lotSizeFilter: item.lotSizeFilter && {
+        minOrderAmt:
+          item.lotSizeFilter.minOrderAmt &&
+          Number(item.lotSizeFilter.minOrderAmt),
+        maxOrderAmt:
+          item.lotSizeFilter.maxOrderAmt &&
+          Number(item.lotSizeFilter.maxOrderAmt),
+        maxLimitOrderQty:
+          item.lotSizeFilter.maxLimitOrderQty &&
+          Number(item.lotSizeFilter.maxLimitOrderQty),
+        maxMarketOrderQty:
+          item.lotSizeFilter.maxMarketOrderQty &&
+          Number(item.lotSizeFilter.maxMarketOrderQty),
+        maxMktOrderQty:
+          item.lotSizeFilter.maxMktOrderQty &&
+          Number(item.lotSizeFilter.maxMktOrderQty),
+        qtyStep:
+          item.lotSizeFilter.qtyStep && Number(item.lotSizeFilter.qtyStep),
+        minNotionalValue:
+          item.lotSizeFilter.minNotionalValue &&
+          Number(item.lotSizeFilter.minNotionalValue),
+      },
+      leverageFilter: item.leverageFilter && {
+        minLeverage:
+          item.leverageFilter.minLeverage &&
+          Number(item.leverageFilter.minLeverage),
+        maxLeverage:
+          item.leverageFilter.maxLeverage &&
+          Number(item.leverageFilter.maxLeverage),
+        leverageStep:
+          item.leverageFilter.leverageStep &&
+          Number(item.leverageFilter.leverageStep),
+      },
+    };
+  }
+
   useEffect(() => {
     console.log("setInterval refetchStatus", intervalMS);
     if (!intervalMS) return;
@@ -68,7 +147,7 @@ export function useBybit(
     // запрос статуса сервера
     console.log("useEffect triggerState", triggerState);
     refetchState();
-  }, [triggerState, category]);
+  }, [triggerState, category, baseCoin, symbol]);
 
   useEffect(() => {
     // обработать ошибки
@@ -90,11 +169,10 @@ export function useBybit(
       if (dataState.result.list.length === 0) {
         setIsOnline(true);
         // Запрос перечня Инструментов
-        setTriggerInstruments((t) => t + 1);
+        category && baseCoin && setTriggerInstruments((t) => t + 1);
+        // Запрос детализации по Инструменту
+        category && symbol && setTriggerInstrumentDetails((t) => t + 1);
       } else {
-        console.log(
-          "dataState.result.list.length=, dataState.result.list.length",
-        );
         setIsOnline(false);
         // TODO сделать обработку и вывод ошибок
       }
@@ -104,23 +182,42 @@ export function useBybit(
   useEffect(() => {
     // Запрос перечня Инструментов
     console.log("useEffect triggerInstruments", triggerInstruments);
-    console.time("triggerInstruments");
+    console.time("dataInstruments");
     triggerInstruments && refetchInstruments();
   }, [triggerInstruments]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect errorInstruments", errorInstruments);
-    errorInstruments && setIsOnline(false);
     // TODO сделать обработку и вывод ошибок
   }, [errorInstruments]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect dataInstruments", dataInstruments);
-    console.timeEnd("triggerInstruments");
+    console.timeEnd("dataInstruments");
     // TODO сделать обработку и вывод ошибок
   }, [dataInstruments]);
 
-  return { isOnline, serverTime, dataInstruments };
+  useEffect(() => {
+    // Запрос детализации по Инструменту
+    console.log("useEffect triggerInstrumentDetails", triggerInstrumentDetails);
+    console.time("dataInstrumentDetails");
+    triggerInstruments && refetchInstrumentDetails();
+  }, [triggerInstrumentDetails]);
+
+  useEffect(() => {
+    // обработать ошибки
+    console.log("useEffect errorInstrumentDetails", errorInstrumentDetails);
+    // TODO сделать обработку и вывод ошибок
+  }, [errorInstrumentDetails]);
+
+  useEffect(() => {
+    // обработать ошибки
+    console.log("useEffect dataInstrumentDetails", dataInstrumentDetails);
+    console.timeEnd("dataInstrumentDetails");
+    // TODO сделать обработку и вывод ошибок
+  }, [dataInstrumentDetails]);
+
+  return { isOnline, serverTime, dataInstruments, dataInstrumentDetails };
 }

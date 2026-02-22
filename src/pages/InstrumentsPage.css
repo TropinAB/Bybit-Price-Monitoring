@@ -163,8 +163,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .no-selection {
@@ -177,35 +179,68 @@
   text-align: center;
 }
 
+.instrument-details {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .instrument-details h2 {
   margin: 0 0 20px 0;
   color: #212529;
   font-size: 24px;
   border-bottom: 2px solid #e9ecef;
   padding-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.details-groups-container {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+  /* Немного отступа для скролла */
+}
+
+.details-group {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+  margin-bottom: 16px;
+}
+
+.details-group:last-child {
+  margin-bottom: 0;
+}
+
+.group-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #495057;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .details-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  gap: 12px;
 }
 
 .detail-item {
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .detail-item .label {
-  display: block;
-  font-size: 12px;
+  font-size: 14px;
   color: #868e96;
-  margin-bottom: 5px;
 }
 
 .detail-item .value {
-  display: block;
   font-size: 18px;
   font-weight: 500;
   color: #212529;

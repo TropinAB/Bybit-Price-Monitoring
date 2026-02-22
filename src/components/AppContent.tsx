@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router";
 import { useBybit } from "../hooks/useBybit";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useState } from "react";
 
 const menuItems = [
   { path: PREFIX, name: "Инструменты" },
@@ -21,11 +22,9 @@ export function AppContent() {
     "Bybit-Price-Monitoring:baseCoin",
     "USDT",
   );
-  const { isOnline, serverTime, dataInstruments } = useBybit(
-    category,
-    baseCoin,
-    refreshInterval,
-  );
+  const [selectedInstrument, setSelectedInstrument] = useState("");
+  const { isOnline, serverTime, dataInstruments, dataInstrumentDetails } =
+    useBybit(category, baseCoin, refreshInterval, selectedInstrument);
   console.log("AppContent", category, baseCoin);
   function handleIntervalChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRefreshInterval(Number(e.target.value));
@@ -72,8 +71,11 @@ export function AppContent() {
             onChangeCategory: setCategory,
             baseCoin,
             onChangeBaseCoin: setBaseCoin,
+            selectedInstrument,
+            onChangeSelectedInstrument: setSelectedInstrument,
             isOnline,
             dataInstruments,
+            dataInstrumentDetails,
           }}
         />
       </main>

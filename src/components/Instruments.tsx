@@ -2,6 +2,11 @@ import { useOutletContext } from "react-router";
 import { BybitInstrument } from "../types/BybitInstruments";
 import { useMemo, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import {
+  formatPercentage,
+  formatPrice,
+  formatVolume,
+} from "../utils/FormatValues";
 
 const categories = [
   { value: "spot", name: "СПОТ" },
@@ -23,6 +28,8 @@ interface ContextType {
   onChangeCategory: (category: string) => void;
   baseCoin: string;
   onChangeBaseCoin: (category: string) => void;
+  selectedInstrument: string;
+  onChangeSelectedInstrument: (category: string) => void;
   dataInstruments: BybitInstrument[];
 }
 
@@ -36,11 +43,12 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
     onChangeCategory,
     baseCoin,
     onChangeBaseCoin,
+    selectedInstrument,
+    onChangeSelectedInstrument,
     dataInstruments,
   } = useOutletContext<ContextType>();
   console.log("Instruments", category, baseCoin);
 
-  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [filterSymbol, setFilterSymbol] = useState<string>("");
   const [sortColumn, setSortColumn] = useLocalStorage(
     "Bybit-Price-Monitoring:sortColumn",
@@ -94,38 +102,18 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
   }
 
   function handleRowClick(instrument: BybitInstrument) {
-    setSelectedSymbol(instrument.symbol);
+    onChangeSelectedInstrument(instrument.symbol);
     if (onSelectInstrument) onSelectInstrument(instrument);
   }
 
-  function numberWithSpaces(x: number, trunc: number) {
-    var parts: string[] = x.toFixed(trunc).replace(".", ",").split(",");
-    if (parts[0]) parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    return parts.join(",");
+  function handleChangeCategory(value: string) {
+    onChangeCategory(value);
+    onChangeSelectedInstrument("");
   }
 
-  function formatPrice(price: number | null) {
-    if (price === null) return "-";
-    return price.toLocaleString("ru-RU", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 12,
-    });
-  }
-
-  function formatVolume(volume: number | null) {
-    if (volume === null) return "-";
-    if (volume > 1_000_000)
-      return `${numberWithSpaces(volume / 1_000_000, 3)}M`;
-    if (volume > 1_000) return `${numberWithSpaces(volume / 1_000, 3)}K`;
-    return numberWithSpaces(volume, 3);
-  }
-
-  function formatPercentage(value: number | null) {
-    if (value === null) return "-";
-    const className = value >= 0 ? "positive" : "negative";
-    return (
-      <span className={className}>{numberWithSpaces(value * 100, 2)}%</span>
-    );
+  function handleChangeBaseCoin(value: string) {
+    onChangeBaseCoin(value);
+    onChangeSelectedInstrument("");
   }
 
   return (
@@ -133,7 +121,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
       <div className="filters-panel">
         <select
           value={category}
-          onChange={(e) => onChangeCategory(e.target.value)}
+          onChange={(e) => handleChangeCategory(e.target.value)}
           className="filter-select"
         >
           {categories.map((category) => (
@@ -144,7 +132,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
         </select>
         <select
           value={baseCoin}
-          onChange={(e) => onChangeBaseCoin(e.target.value)}
+          onChange={(e) => handleChangeBaseCoin(e.target.value)}
           className="filter-select"
         >
           {baseCoins.map((coin) => (
@@ -180,7 +168,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
                 key={instrument.symbol}
                 onClick={() => handleRowClick(instrument)}
                 className={
-                  selectedSymbol === instrument.symbol ? "selected" : ""
+                  selectedInstrument === instrument.symbol ? "selected" : ""
                 }
               >
                 <td>{instrument.symbol}</td>
