@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import { useBybit } from "../hooks/useBybit";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const menuItems = [
   { path: PREFIX, name: "Инструменты" },
@@ -9,13 +9,24 @@ const menuItems = [
 ];
 
 export function AppContent() {
-  const [refreshInterval, setRefreshInterval] = useState(1);
-  const { isOnline, serverTime /*, dataInstruments*/ } = useBybit(
+  const [refreshInterval, setRefreshInterval] = useLocalStorage(
+    "Bybit-Price-Monitoring:refreshInterval",
+    0,
+  );
+  const [category, setCategory] = useLocalStorage(
+    "Bybit-Price-Monitoring:category",
     "linear",
+  );
+  const [baseCoin, setBaseCoin] = useLocalStorage(
+    "Bybit-Price-Monitoring:baseCoin",
     "USDT",
+  );
+  const { isOnline, serverTime, dataInstruments } = useBybit(
+    category,
+    baseCoin,
     refreshInterval,
   );
-
+  console.log("AppContent", category, baseCoin);
   function handleIntervalChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRefreshInterval(Number(e.target.value));
   }
@@ -51,15 +62,23 @@ export function AppContent() {
             </select>
           </div>
         </div>
-        <hr />
       </header>
 
       <main>
-        <Outlet context={{ refreshInterval }} />
+        <Outlet
+          context={{
+            refreshInterval,
+            category,
+            onChangeCategory: setCategory,
+            baseCoin,
+            onChangeBaseCoin: setBaseCoin,
+            isOnline,
+            dataInstruments,
+          }}
+        />
       </main>
 
       <footer>
-        <hr />
         Состояние сервера Bybit: {isOnline ? "Работает" : "Не работает"}, время
         обновления: {serverTime?.toLocaleTimeString()}
       </footer>

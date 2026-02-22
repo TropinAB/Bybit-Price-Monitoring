@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetch } from "./useFetch";
 import { BybitResponse } from "../types/BybitResponse";
 import { BybitSystemStatuses } from "../types/BybitSystemStatus";
-import { BybitInstument, BybitInstuments } from "../types/BybitInstuments";
+import { BybitInstrument, BybitInstruments } from "../types/BybitInstruments";
 
 // category: spot/linear/inverse/option
 export function useBybit(
@@ -13,7 +13,7 @@ export function useBybit(
   const intervalMS = intervalMinutes * 60 * 1000;
   const [isOnline, setIsOnline] = useState(false);
   const [serverTime, setServerTime] = useState<Date | null>(null);
-  console.log("IsOnline", isOnline);
+  console.log("useBybit", category, baseCoin, intervalMinutes);
 
   // Запрос состояния сервера
   const [triggerState, setTriggerState] = useState(0);
@@ -34,7 +34,7 @@ export function useBybit(
     data: dataInstruments,
     error: errorInstruments,
     refetchData: refetchInstruments,
-  } = useFetch<BybitResponse<BybitInstuments>>(
+  } = useFetch<BybitResponse<BybitInstruments>, BybitInstrument[]>(
     `https://api.bybit.com/v5/market/tickers?category=${category}&baseCoin=${baseCoin}`,
     {
       skipOnMount: true,
@@ -42,15 +42,15 @@ export function useBybit(
     },
   );
   function InstrumentsSelector(
-    response: BybitResponse<BybitInstuments>,
-  ): BybitInstument[] {
+    response: BybitResponse<BybitInstruments>,
+  ): BybitInstrument[] {
     if (!response.result?.list) return [];
     return response.result.list.map((item) => ({
       symbol: item.symbol,
-      lastPrice: item.lastPrice,
-      turnover24h: item.turnover24h,
-      volume24h: item.volume24h,
-      price24hPcnt: item.price24hPcnt,
+      lastPrice: Number(item.lastPrice),
+      turnover24h: Number(item.turnover24h),
+      volume24h: Number(item.volume24h),
+      price24hPcnt: Number(item.price24hPcnt),
     }));
   }
 
@@ -68,7 +68,7 @@ export function useBybit(
     // запрос статуса сервера
     console.log("useEffect triggerState", triggerState);
     refetchState();
-  }, [triggerState]);
+  }, [triggerState, category]);
 
   useEffect(() => {
     // обработать ошибки

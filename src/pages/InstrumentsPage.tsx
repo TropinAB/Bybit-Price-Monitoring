@@ -1,12 +1,11 @@
-import { useFetcher, useOutletContext } from "react-router";
-
-interface ContextType {
-  refreshInterval: number;
-}
+import { Instruments } from "../components/Instruments";
+import "./InstrumentsPage.css";
 
 export function InstrumentsPage() {
-  const { refreshInterval } = useOutletContext<ContextType>();
-  useFetcher;
-
-  return <>InstrumentsPage {refreshInterval}</>;
+  return (
+    <div className="instruments-container">
+      <Instruments />
+      <div className="instrument-details-section"></div>
+    </div>
+  );
 }

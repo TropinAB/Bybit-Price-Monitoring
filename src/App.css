@@ -42,14 +42,14 @@ main {
 
 footer {
   flex-shrink: 0;
-  /* padding: 1rem 0; */
+  padding: 0.2rem 0;
   text-align: center;
-  /* color: #6c757d; */
+  color: #007bff;
 }
 
 .header {
   font-size: 52px;
-  color: orange;
+  color: #007bff;
   text-align: center;
   margin: 10px;
 }
