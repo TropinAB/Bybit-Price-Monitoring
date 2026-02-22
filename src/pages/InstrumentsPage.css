@@ -34,7 +34,7 @@
   padding: 8px 12px;
   border: 1px solid #ced4da;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
   background: white;
   cursor: pointer;
 }
@@ -66,7 +66,7 @@
 .instruments-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .instruments-table th {
@@ -111,7 +111,7 @@
 }
 
 .instruments-table td {
-  padding: 4px 4px;
+  padding: 4px;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -127,6 +127,36 @@
 .instruments-table tbody tr.selected {
   background-color: #e7f5ff;
   border-left: 3px solid #339af0;
+}
+
+/* Стили для колонки с кнопкой */
+.instruments-table td:first-child,
+.instruments-table th:first-child {
+  width: 40px;
+  text-align: center;
+  padding: 10px 5px;
+}
+
+.monitoring-price-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #339af0;
+  background: white;
+  color: #339af0;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.monitoring-price-btn:hover {
+  background: #339af0;
+  color: white;
+  transform: scale(1.1);
 }
 
 /* Форматирование чисел */
@@ -236,7 +266,7 @@
 }
 
 .detail-item .label {
-  font-size: 14px;
+  font-size: 16px;
   color: #868e96;
 }
 

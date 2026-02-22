@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router";
 import { useBybit } from "../hooks/useBybit";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useState } from "react";
+import { MonitoringData } from "../types/MonitoringData";
 
 const menuItems = [
   { path: PREFIX, name: "Инструменты" },
@@ -21,6 +22,10 @@ export function AppContent() {
   const [baseCoin, setBaseCoin] = useLocalStorage(
     "Bybit-Price-Monitoring:baseCoin",
     "USDT",
+  );
+  const [monitoringData, setMonitoringData] = useLocalStorage<MonitoringData[]>(
+    "Bybit-Price-Monitoring:monitoringData",
+    [],
   );
   const [selectedInstrument, setSelectedInstrument] = useState("");
   const { isOnline, serverTime, dataInstruments, dataInstrumentDetails } =
@@ -76,6 +81,8 @@ export function AppContent() {
             isOnline,
             dataInstruments,
             dataInstrumentDetails,
+            monitoringData,
+            onChangeMonitoringData: setMonitoringData,
           }}
         />
       </main>

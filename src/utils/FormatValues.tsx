@@ -27,6 +27,21 @@ export function formatPercentage(value: number | null) {
   if (value === null) return "-";
   const className = value >= 0 ? "positive" : "negative";
   return (
-    <span className={className}> {numberWithSpaces(value * 100, 2)} % </span>
+    <span className={className}> {numberWithSpaces(value * 100, 2)}% </span>
   );
+}
+
+// Форматирование даты
+export function formatDate(date: Date | string | null | undefined) {
+  if (!date) return "-";
+  if (typeof date === "string") date = new Date(date);
+  if (isNaN(date.getTime())) return "-";
+
+  return date.toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }

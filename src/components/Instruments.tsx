@@ -3,10 +3,12 @@ import { BybitInstrument } from "../types/BybitInstruments";
 import { useMemo, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import {
+  formatDate,
   formatPercentage,
   formatPrice,
   formatVolume,
 } from "../utils/FormatValues";
+import { MonitoringData } from "../types/MonitoringData";
 
 const categories = [
   { value: "spot", name: "СПОТ" },
@@ -31,6 +33,8 @@ interface ContextType {
   selectedInstrument: string;
   onChangeSelectedInstrument: (category: string) => void;
   dataInstruments: BybitInstrument[];
+  monitoringData: MonitoringData[];
+  onChangeMonitoringData: (data: MonitoringData[]) => void;
 }
 
 interface InstrumentsProps {
@@ -46,6 +50,8 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
     selectedInstrument,
     onChangeSelectedInstrument,
     dataInstruments,
+    monitoringData,
+    onChangeMonitoringData,
   } = useOutletContext<ContextType>();
   console.log("Instruments", category, baseCoin);
 
@@ -116,6 +122,42 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
     onChangeSelectedInstrument("");
   }
 
+  function handleSetMonitoringPrice(instrument: BybitInstrument) {
+    if (!instrument.lastPrice) {
+      alert(`Текущая цена = 0! :(`);
+      return;
+    }
+    const sPrice = prompt(`Введите цену для ${instrument.symbol}:`, "");
+    if (!sPrice) return;
+    const price = parseFloat(sPrice.replace(",", "."));
+    if (isNaN(price) || price <= 0) {
+      alert("Пожалуйста, введите корректное положительное число");
+      return;
+    }
+    // Проверить наличие записи
+    const existingMD: MonitoringData | undefined = monitoringData.find(
+      (data) =>
+        data.category === category &&
+        data.symbol === data.symbol &&
+        data.targetPrice === price,
+    );
+    if (existingMD) {
+      alert(
+        `Данные с уровнем ${price} уже были добавлены ${formatDate(existingMD.startDate)}!`,
+      );
+      return;
+    }
+
+    const newMD: MonitoringData = {
+      category: category,
+      symbol: instrument.symbol,
+      startPrice: instrument.lastPrice,
+      startDate: new Date(),
+      targetPrice: price,
+    };
+    onChangeMonitoringData([...monitoringData, newMD]);
+  }
+
   return (
     <div className="instruments-table-section">
       <div className="filters-panel">
@@ -171,6 +213,22 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
                   selectedInstrument === instrument.symbol ? "selected" : ""
                 }
               >
+                <td
+                  onClick={
+                    (e) => e.stopPropagation() /* остановить распространение */
+                  }
+                >
+                  <button
+                    title="Установить ожидаемую цену"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSetMonitoringPrice(instrument);
+                    }}
+                    className="monitoring-price-btn"
+                  >
+                    +
+                  </button>
+                </td>
                 <td>{instrument.symbol}</td>
                 <td className="price">{formatPrice(instrument.lastPrice)}</td>
                 <td className="volume">
