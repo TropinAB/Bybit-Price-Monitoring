@@ -55,7 +55,6 @@ interface ContextType {
 
 export function InstrumentDetails() {
   const { dataInstrumentDetails: instrument } = useOutletContext<ContextType>();
-  console.log("!!!!!!!!!! dataInstrumentDetails", instrument);
 
   // подгодовить структуру параметров
   function getGroups() {

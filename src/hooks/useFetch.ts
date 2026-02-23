@@ -16,7 +16,6 @@ export function useFetch<T = any, R = any>(
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchData = useCallback(async () => {
-    console.log("fetchData", url);
     if (!url) return;
     abortControllerRef.current?.abort();
     abortControllerRef.current = new AbortController();

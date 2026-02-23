@@ -49,7 +49,6 @@ export function AppContent() {
   }
 
   useEffect(() => {
-    console.log("###", monitoringData.length);
     if (!dataInstruments || !monitoringData || monitoringData.length === 0)
       return;
 
@@ -61,16 +60,6 @@ export function AppContent() {
         (data) =>
           data.category === itemMD.category && data.symbol === itemMD.symbol,
       );
-      instrument &&
-        instrument.lastPrice &&
-        console.log(
-          "###",
-          itemMD.targetPrice,
-          instrument?.lastPrice,
-          itemMD.startPrice,
-          Math.sign(instrument?.lastPrice - itemMD.targetPrice),
-          Math.sign(itemMD.targetPrice - itemMD.startPrice),
-        );
       if (
         instrument &&
         instrument.lastPrice &&
@@ -78,7 +67,6 @@ export function AppContent() {
           Math.sign(itemMD.targetPrice - itemMD.startPrice)
       ) {
         // пересечение уровня
-        console.log("###", true);
         itemMD = { ...itemMD, targetDate: new Date() }; // копия
 
         // playTargetReachedSound();
@@ -108,7 +96,6 @@ export function AppContent() {
     if (wasChanged) setMonitoringData(newMD);
   }, [dataInstruments, monitoringData]);
 
-  console.log("AppContent", category, baseCoin);
   return (
     <div className="app-container">
       <Toaster position="top-right" />

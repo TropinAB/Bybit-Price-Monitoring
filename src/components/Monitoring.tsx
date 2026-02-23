@@ -32,9 +32,8 @@ const categories = new Map<string, string>([
 ]);
 
 export function Monitoring() {
-  const { category, dataInstruments, monitoringData, onChangeMonitoringData } =
+  const { dataInstruments, monitoringData, onChangeMonitoringData } =
     useOutletContext<ContextType>();
-  console.log("Monitoring", category, monitoringData);
 
   const preparedMD = useMemo(() => {
     if (!monitoringData) return [];

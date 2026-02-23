@@ -53,7 +53,6 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
     monitoringData,
     onChangeMonitoringData,
   } = useOutletContext<ContextType>();
-  console.log("Instruments", category, baseCoin);
 
   const [filterSymbol, setFilterSymbol] = useState<string>("");
   const [sortColumn, setSortColumn] = useLocalStorage(
@@ -93,7 +92,6 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
       return sortDirection === "ascending" ? comparison : -comparison;
     });
 
-    console.log("Sort", sortColumn, sortDirection);
     return result;
   }, [dataInstruments, baseCoin, filterSymbol, sortColumn, sortDirection]);
 

@@ -18,7 +18,6 @@ export function useBybit(
   const [isOnline, setIsOnline] = useState(false);
   const [error, setError] = useState("");
   const [serverTime, setServerTime] = useState<Date | null>(null);
-  console.log("useBybit", intervalMinutes);
 
   // Запрос состояния сервера
   const [triggerState, setTriggerState] = useState(0);
@@ -30,11 +29,9 @@ export function useBybit(
   } = useFetch<BybitResponse<BybitSystemStatuses>>(
     "https://api.bybit.com/v5/system/status",
   );
-  // console.log("requestBybitState", stateLoading, dataState, errorState);
 
   // Запрос перечня Инструментов по категориям spot/linear
   const {
-    // loading: loadingInstruments,
     data: dataInstrumentsSpot,
     error: errorInstrumentsSpot,
     refetchData: refetchInstrumentsSpot,
@@ -142,9 +139,7 @@ export function useBybit(
     };
   }
 
-  console.log("triggerState", triggerState);
   useEffect(() => {
-    console.log("setInterval refetchStatus", intervalMS);
     if (!intervalMS) return;
     const timerID = setInterval(() => {
       setTriggerState((t) => t + 1);
@@ -155,13 +150,11 @@ export function useBybit(
 
   useEffect(() => {
     // запрос статуса сервера
-    console.log("useEffect triggerState", triggerState);
     refetchState();
   }, [triggerState]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect errorState", errorState);
     if (errorState) {
       setIsOnline(false);
       setError(errorState);
@@ -170,11 +163,6 @@ export function useBybit(
 
   useEffect(() => {
     // обработать статус сервера
-    console.log(
-      "useEffect dataState",
-      dataState && new Date(dataState.time),
-      dataState,
-    );
     if (!dataState) return;
     setServerTime(new Date(dataState.time));
     if (dataState.result && dataState.result.list) {
@@ -182,9 +170,7 @@ export function useBybit(
         setIsOnline(true);
         setError("");
         // Запрос перечня Инструментов
-        console.time("dataInstrumentsSpot");
         refetchInstrumentsSpot();
-        console.time("dataInstrumentsLinear");
         refetchInstrumentsLinear();
       } else {
         setIsOnline(false);
@@ -195,54 +181,38 @@ export function useBybit(
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect errorInstrumentsSpot", errorInstrumentsSpot);
     errorInstrumentsSpot && setError(errorInstrumentsSpot);
   }, [errorInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect dataInstrumentsSpot", dataInstrumentsSpot);
-    dataInstrumentsSpot && console.timeEnd("dataInstrumentsSpot");
     dataInstrumentsSpot && setError("");
   }, [dataInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect errorInstrumentsLinear", errorInstrumentsLinear);
     errorInstrumentsLinear && setError(errorInstrumentsLinear);
   }, [errorInstrumentsLinear]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect dataInstrumentsLinear", dataInstrumentsLinear);
-    dataInstrumentsLinear && console.timeEnd("dataInstrumentsLinear");
     dataInstrumentsLinear && setError("");
   }, [dataInstrumentsLinear]);
 
   useEffect(() => {
     // запрос статуса сервера
-    console.log(
-      "!!!! useEffect isOnline, category, symbol",
-      isOnline,
-      category,
-      symbol,
-    );
     if (isOnline && category && symbol) {
-      console.time("dataInstrumentDetails");
       refetchInstrumentDetails();
     }
   }, [isOnline, category, symbol]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect errorInstrumentDetails", errorInstrumentDetails);
     errorInstrumentDetails && setError(errorInstrumentDetails);
   }, [errorInstrumentDetails]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect dataInstrumentDetails", dataInstrumentDetails);
-    dataInstrumentDetails && console.timeEnd("dataInstrumentDetails");
     dataInstrumentDetails && setError("");
   }, [dataInstrumentDetails]);
 
