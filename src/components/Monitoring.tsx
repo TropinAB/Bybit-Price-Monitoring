@@ -48,7 +48,7 @@ export function Monitoring() {
       return {
         ...itemMD,
         lastPrice: instrument?.lastPrice || 0,
-        key: `${itemMD.category}-${itemMD.symbol}-${itemMD.targetPrice}`,
+        key: `${itemMD.category}-${itemMD.symbol}-${itemMD.targetPrice}-${itemMD.startDate}`,
       };
     });
 
@@ -71,7 +71,8 @@ export function Monitoring() {
           !(
             item.category === itemMD.category &&
             item.symbol === itemMD.symbol &&
-            item.targetPrice === itemMD.targetPrice
+            item.targetPrice === itemMD.targetPrice &&
+            item.startDate.getTime() === itemMD.startDate.getTime()
           ),
       );
       onChangeMonitoringData(newData);
@@ -125,7 +126,6 @@ export function Monitoring() {
             <tbody>
               {preparedMD.map((item) => {
                 const reached = isTargetReached(item);
-                console.log("itemMD", item, item.targetDate, reached);
                 const priceDiff =
                   (item.lastPrice - item.targetPrice) / item.targetPrice;
                 return (
@@ -134,7 +134,7 @@ export function Monitoring() {
                     className={reached ? "target-reached" : ""}
                   >
                     <td>{categories.get(item.category) || "-"}</td>
-                    <td className="symbol">{item.symbol}</td>
+                    <td className="instrument">{item.symbol}</td>
                     <td className="price">{formatPrice(item.startPrice)}</td>
                     <td className="date">{formatDate(item.startDate)}</td>
                     <td className="price current">

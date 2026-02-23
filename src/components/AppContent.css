@@ -1,0 +1,67 @@
+.app-footer {
+  background: white;
+  border-top: 1px solid #e9ecef;
+  padding: 12px 24px;
+  margin-top: auto;
+  /* Прижимает footer к низу, если используется flex-контейнер */
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-size: 14px;
+  color: #495057;
+}
+
+.server-status,
+.update-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-label,
+.time-label {
+  color: #868e96;
+  font-weight: 500;
+}
+
+.status-value {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.status-value.online {
+  color: #40c057;
+  background: #ebfbee;
+}
+
+.status-value.offline {
+  color: #fa5252;
+  background: #fff5f5;
+}
+
+.time-value {
+  font-family: "Monaco", "Menlo", monospace;
+  color: #1971c2;
+  font-weight: 500;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .app-footer {
+    padding: 12px 16px;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}

@@ -135,11 +135,15 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
       alert("Пожалуйста, введите корректное положительное число");
       return;
     }
+    if (price === instrument.lastPrice) {
+      alert(`Цена ${price} уже достигнута!`);
+      return;
+    }
     // Проверить наличие записи
     const existingMD: MonitoringData | undefined = monitoringData.find(
       (data) =>
         data.category === category &&
-        data.symbol === data.symbol &&
+        data.symbol === selectedInstrument &&
         data.targetPrice === price,
     );
     if (existingMD) {
