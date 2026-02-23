@@ -29,7 +29,7 @@ export function AppContent() {
   );
   const [selectedInstrument, setSelectedInstrument] = useState("");
   const { isOnline, serverTime, dataInstruments, dataInstrumentDetails } =
-    useBybit(category, baseCoin, refreshInterval, selectedInstrument);
+    useBybit(refreshInterval, category, selectedInstrument);
   console.log("AppContent", category, baseCoin);
   function handleIntervalChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRefreshInterval(Number(e.target.value));

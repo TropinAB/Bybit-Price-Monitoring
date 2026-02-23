@@ -1,4 +1,5 @@
 interface BybitInstrument {
+  category: string;
   symbol: string;
   lastPrice: number | null; // текущая цена
   turnover24h: number | null; // объём торгов в $

@@ -12,15 +12,14 @@ import {
 
 // category: spot/linear/inverse/option
 export function useBybit(
-  category: string = "spot",
-  baseCoin: string = "USDT",
   intervalMinutes: number = 1,
+  category: string = "spot",
   symbol: string = "",
 ) {
   const intervalMS = intervalMinutes * 60 * 1000;
   const [isOnline, setIsOnline] = useState(false);
   const [serverTime, setServerTime] = useState<Date | null>(null);
-  console.log("useBybit", category, baseCoin, intervalMinutes);
+  console.log("useBybit", intervalMinutes);
 
   // Запрос состояния сервера
   const [triggerState, setTriggerState] = useState(0);
@@ -34,15 +33,26 @@ export function useBybit(
   );
   // console.log("requestBybitState", stateLoading, dataState, errorState);
 
-  // Запрос перечня Инструментов
-  const [triggerInstruments, setTriggerInstruments] = useState(0);
+  // Запрос перечня Инструментов по категориям spot/linear
   const {
     // loading: loadingInstruments,
-    data: dataInstruments,
-    error: errorInstruments,
-    refetchData: refetchInstruments,
+    data: dataInstrumentsSpot,
+    error: errorInstrumentsSpot,
+    refetchData: refetchInstrumentsSpot,
   } = useFetch<BybitResponse<BybitInstruments>, BybitInstrument[]>(
-    `https://api.bybit.com/v5/market/tickers?category=${category}&baseCoin=${baseCoin}`,
+    `https://api.bybit.com/v5/market/tickers?category=spot`,
+    {
+      skipOnMount: true,
+      dataSelector: InstrumentsSelector,
+    },
+  );
+  const {
+    // loading: loadingInstruments,
+    data: dataInstrumentsLinear,
+    error: errorInstrumentsLinear,
+    refetchData: refetchInstrumentsLinear,
+  } = useFetch<BybitResponse<BybitInstruments>, BybitInstrument[]>(
+    `https://api.bybit.com/v5/market/tickers?category=linear`,
     {
       skipOnMount: true,
       dataSelector: InstrumentsSelector,
@@ -53,6 +63,7 @@ export function useBybit(
   ): BybitInstrument[] {
     if (!response.result?.list) return [];
     return response.result.list.map((item) => ({
+      category: response.result.category,
       symbol: item.symbol,
       lastPrice: Number(item.lastPrice),
       turnover24h: Number(item.turnover24h),
@@ -62,7 +73,6 @@ export function useBybit(
   }
 
   // Запрос детализации по Инструменту
-  const [triggerInstrumentDetails, setTriggerInstrumentDetails] = useState(0);
   const {
     // loading: loadingInstruments,
     data: dataInstrumentDetails,
@@ -133,6 +143,7 @@ export function useBybit(
     };
   }
 
+  console.log("triggerState", triggerState);
   useEffect(() => {
     console.log("setInterval refetchStatus", intervalMS);
     if (!intervalMS) return;
@@ -147,7 +158,7 @@ export function useBybit(
     // запрос статуса сервера
     console.log("useEffect triggerState", triggerState);
     refetchState();
-  }, [triggerState, category, baseCoin, symbol]);
+  }, [triggerState]);
 
   useEffect(() => {
     // обработать ошибки
@@ -169,9 +180,10 @@ export function useBybit(
       if (dataState.result.list.length === 0) {
         setIsOnline(true);
         // Запрос перечня Инструментов
-        category && baseCoin && setTriggerInstruments((t) => t + 1);
-        // Запрос детализации по Инструменту
-        category && symbol && setTriggerInstrumentDetails((t) => t + 1);
+        console.time("dataInstrumentsSpot");
+        refetchInstrumentsSpot();
+        console.time("dataInstrumentsLinear");
+        refetchInstrumentsLinear();
       } else {
         setIsOnline(false);
         // TODO сделать обработку и вывод ошибок
@@ -180,31 +192,44 @@ export function useBybit(
   }, [dataState]);
 
   useEffect(() => {
-    // Запрос перечня Инструментов
-    console.log("useEffect triggerInstruments", triggerInstruments);
-    console.time("dataInstruments");
-    triggerInstruments && refetchInstruments();
-  }, [triggerInstruments]);
+    // обработать ошибки
+    console.log("useEffect errorInstrumentsSpot", errorInstrumentsSpot);
+    // TODO сделать обработку и вывод ошибок
+  }, [errorInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect errorInstruments", errorInstruments);
+    console.log("useEffect dataInstrumentsSpot", dataInstrumentsSpot);
+    dataInstrumentsSpot && console.timeEnd("dataInstrumentsSpot");
     // TODO сделать обработку и вывод ошибок
-  }, [errorInstruments]);
+  }, [dataInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
-    console.log("useEffect dataInstruments", dataInstruments);
-    console.timeEnd("dataInstruments");
+    console.log("useEffect errorInstrumentsLinear", errorInstrumentsLinear);
     // TODO сделать обработку и вывод ошибок
-  }, [dataInstruments]);
+  }, [errorInstrumentsLinear]);
 
   useEffect(() => {
-    // Запрос детализации по Инструменту
-    console.log("useEffect triggerInstrumentDetails", triggerInstrumentDetails);
-    console.time("dataInstrumentDetails");
-    triggerInstruments && refetchInstrumentDetails();
-  }, [triggerInstrumentDetails]);
+    // обработать ошибки
+    console.log("useEffect dataInstrumentsLinear", dataInstrumentsLinear);
+    dataInstrumentsLinear && console.timeEnd("dataInstrumentsLinear");
+    // TODO сделать обработку и вывод ошибок
+  }, [dataInstrumentsLinear]);
+
+  useEffect(() => {
+    // запрос статуса сервера
+    console.log(
+      "!!!! useEffect isOnline, category, symbol",
+      isOnline,
+      category,
+      symbol,
+    );
+    if (isOnline && category && symbol) {
+      console.time("dataInstrumentDetails");
+      refetchInstrumentDetails();
+    }
+  }, [isOnline, category, symbol]);
 
   useEffect(() => {
     // обработать ошибки
@@ -215,9 +240,13 @@ export function useBybit(
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect dataInstrumentDetails", dataInstrumentDetails);
-    console.timeEnd("dataInstrumentDetails");
+    dataInstrumentDetails && console.timeEnd("dataInstrumentDetails");
     // TODO сделать обработку и вывод ошибок
   }, [dataInstrumentDetails]);
 
+  let dataInstruments: BybitInstrument[] = [
+    ...(dataInstrumentsSpot || []),
+    ...(dataInstrumentsLinear || []),
+  ];
   return { isOnline, serverTime, dataInstruments, dataInstrumentDetails };
 }

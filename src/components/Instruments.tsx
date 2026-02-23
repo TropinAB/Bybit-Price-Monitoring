@@ -70,6 +70,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
     // Фильтруем по базовой монете
     const result: BybitInstrument[] = dataInstruments.filter(
       (instrument) =>
+        instrument.category === category &&
         instrument.symbol.endsWith(baseCoin) &&
         instrument.symbol.includes(filterSymbol),
     );
@@ -194,6 +195,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
         <table className="instruments-table">
           <thead>
             <tr>
+              <th>{/* для кнопки */}</th>
               {columns.map((column) => (
                 <th
                   className={column.id === sortColumn ? sortDirection : ""}
@@ -229,7 +231,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
                     +
                   </button>
                 </td>
-                <td>{instrument.symbol}</td>
+                <td className="symbol">{instrument.symbol}</td>
                 <td className="price">{formatPrice(instrument.lastPrice)}</td>
                 <td className="volume">
                   {formatVolume(instrument.turnover24h)}

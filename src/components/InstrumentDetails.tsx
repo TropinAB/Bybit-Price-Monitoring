@@ -74,7 +74,7 @@ export function InstrumentDetails() {
             if (typeof value === "number") value = numberWithSpaces(value); // TODO подобрать точность
             if (value instanceof Date) value = value.toLocaleString("ru-RU");
             items.push(
-              <div className="detail-item">
+              <div className="detail-item" key={param.path}>
                 <span className="label">{param.label}:</span>
                 <span className="value">{value}</span>
               </div>,
@@ -83,7 +83,7 @@ export function InstrumentDetails() {
         });
       if (items && items.length) {
         groups.push(
-          <div className="details-group">
+          <div className="details-group" key={group.groupName || "main"}>
             <h3 className="group-title">{group.groupName}</h3>
             <div className="details-grid">{items}</div>
           </div>,
