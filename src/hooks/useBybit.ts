@@ -8,8 +8,6 @@ import {
   BybitInstrumentsInfo,
 } from "../types/BybitInstrumentInfo";
 
-// TODO подумать как разделить обновление только того, что меняется
-
 // category: spot/linear/inverse/option
 export function useBybit(
   intervalMinutes: number = 1,
@@ -18,6 +16,7 @@ export function useBybit(
 ) {
   const intervalMS = intervalMinutes * 60 * 1000;
   const [isOnline, setIsOnline] = useState(false);
+  const [error, setError] = useState("");
   const [serverTime, setServerTime] = useState<Date | null>(null);
   console.log("useBybit", intervalMinutes);
 
@@ -163,8 +162,10 @@ export function useBybit(
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect errorState", errorState);
-    errorState && setIsOnline(false);
-    // TODO сделать обработку и вывод ошибок
+    if (errorState) {
+      setIsOnline(false);
+      setError(errorState);
+    }
   }, [errorState]);
 
   useEffect(() => {
@@ -179,6 +180,7 @@ export function useBybit(
     if (dataState.result && dataState.result.list) {
       if (dataState.result.list.length === 0) {
         setIsOnline(true);
+        setError("");
         // Запрос перечня Инструментов
         console.time("dataInstrumentsSpot");
         refetchInstrumentsSpot();
@@ -186,7 +188,7 @@ export function useBybit(
         refetchInstrumentsLinear();
       } else {
         setIsOnline(false);
-        // TODO сделать обработку и вывод ошибок
+        // TODO сделать обработку ответов о профработах
       }
     }
   }, [dataState]);
@@ -194,27 +196,27 @@ export function useBybit(
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect errorInstrumentsSpot", errorInstrumentsSpot);
-    // TODO сделать обработку и вывод ошибок
+    errorInstrumentsSpot && setError(errorInstrumentsSpot);
   }, [errorInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect dataInstrumentsSpot", dataInstrumentsSpot);
     dataInstrumentsSpot && console.timeEnd("dataInstrumentsSpot");
-    // TODO сделать обработку и вывод ошибок
+    dataInstrumentsSpot && setError("");
   }, [dataInstrumentsSpot]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect errorInstrumentsLinear", errorInstrumentsLinear);
-    // TODO сделать обработку и вывод ошибок
+    errorInstrumentsLinear && setError(errorInstrumentsLinear);
   }, [errorInstrumentsLinear]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect dataInstrumentsLinear", dataInstrumentsLinear);
     dataInstrumentsLinear && console.timeEnd("dataInstrumentsLinear");
-    // TODO сделать обработку и вывод ошибок
+    dataInstrumentsLinear && setError("");
   }, [dataInstrumentsLinear]);
 
   useEffect(() => {
@@ -234,19 +236,25 @@ export function useBybit(
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect errorInstrumentDetails", errorInstrumentDetails);
-    // TODO сделать обработку и вывод ошибок
+    errorInstrumentDetails && setError(errorInstrumentDetails);
   }, [errorInstrumentDetails]);
 
   useEffect(() => {
     // обработать ошибки
     console.log("useEffect dataInstrumentDetails", dataInstrumentDetails);
     dataInstrumentDetails && console.timeEnd("dataInstrumentDetails");
-    // TODO сделать обработку и вывод ошибок
+    dataInstrumentDetails && setError("");
   }, [dataInstrumentDetails]);
 
   let dataInstruments: BybitInstrument[] = [
     ...(dataInstrumentsSpot || []),
     ...(dataInstrumentsLinear || []),
   ];
-  return { isOnline, serverTime, dataInstruments, dataInstrumentDetails };
+  return {
+    isOnline,
+    error,
+    serverTime,
+    dataInstruments,
+    dataInstrumentDetails,
+  };
 }

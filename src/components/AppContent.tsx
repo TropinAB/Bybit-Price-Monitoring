@@ -37,8 +37,13 @@ export function AppContent() {
     [],
   );
   const [selectedInstrument, setSelectedInstrument] = useState("");
-  const { isOnline, serverTime, dataInstruments, dataInstrumentDetails } =
-    useBybit(refreshInterval, category, selectedInstrument);
+  const {
+    isOnline,
+    error,
+    serverTime,
+    dataInstruments,
+    dataInstrumentDetails,
+  } = useBybit(refreshInterval, category, selectedInstrument);
   function handleIntervalChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRefreshInterval(Number(e.target.value));
   }
@@ -139,7 +144,7 @@ export function AppContent() {
         </div>
       </header>
 
-      <main id="main">
+      <main id="main" className="main-content">
         <Outlet
           context={{
             refreshInterval,
@@ -160,17 +165,29 @@ export function AppContent() {
 
       <footer className="app-footer">
         <div className="footer-content">
-          <div className="server-status">
-            <span className="status-label">Состояние сервера Bybit:</span>
-            <span className={`status-value ${isOnline ? "online" : "offline"}`}>
-              {isOnline ? "🟢 Работает" : "🔴 Не работает"}
-            </span>
+          <div className="footer-left">
+            <div className="server-status">
+              <span className="status-label">Состояние сервера Bybit:</span>
+              <span
+                className={`status-value ${isOnline ? "online" : "offline"}`}
+              >
+                {isOnline ? "🟢 Работает" : "🔴 Не работает"}
+              </span>
+            </div>
+            {error && (
+              <div className="error-message" title={error}>
+                <span className="error-icon">⚠️</span>
+                <span className="error-text">{error}</span>
+              </div>
+            )}
           </div>
-          <div className="update-time">
-            <span className="time-label">Время обновления:</span>
-            <span className="time-value">
-              {serverTime?.toLocaleTimeString()}
-            </span>
+          <div className="footer-right">
+            <div className="update-time">
+              <span className="time-label">Время обновления:</span>
+              <span className="time-value">
+                {serverTime?.toLocaleTimeString()}
+              </span>
+            </div>
           </div>
         </div>
       </footer>
