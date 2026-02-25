@@ -1,4 +1,3 @@
-/* Monitoring.css */
 .monitoring-container {
   padding: 20px;
   height: 100%;
@@ -9,6 +8,7 @@
 }
 
 .monitoring-header {
+  order: 2;
   display: flex;
   /* justify-content: space-between; */
   align-items: center;
@@ -67,8 +67,8 @@
 
 /* Таблица */
 .table-container {
+  order: 1;
   flex: 1;
-  /* overflow-x: hidden; */
   overflow-y: auto;
   min-height: 0;
   background: white;
@@ -80,44 +80,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 16px;
-  /* table-layout: fixed; */
 }
-
-/* .monitoring-table th:nth-child(1) {
-  width: 10%;
-}
-
-.monitoring-table th:nth-child(2) {
-  width: 12%;
-}
-
-.monitoring-table th:nth-child(3) {
-  width: 10%;
-}
-
-.monitoring-table th:nth-child(4) {
-  width: 12%;
-}
-
-.monitoring-table th:nth-child(5) {
-  width: 10%;
-}
-
-.monitoring-table th:nth-child(6) {
-  width: 12%;
-}
-
-.monitoring-table th:nth-child(7) {
-  width: 12%;
-}
-
-.monitoring-table th:nth-child(8) {
-  width: 10%;
-}
-
-.monitoring-table th:nth-child(9) {
-  width: 12%;
-} */
 
 .monitoring-table th {
   position: relative;
@@ -303,4 +266,115 @@
 
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+/* MonitoringPage.css */
+@media (max-width: 768px) {
+  .monitoring-container {
+    padding: 2px;
+  }
+
+  .monitoring-header {
+    padding: 10px 0px 0px 0px;
+    margin-bottom: 8px;
+  }
+
+  .clear-all-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    gap: 4px;
+  }
+
+  .empty-state {
+    padding: 24px;
+  }
+
+  .empty-state p {
+    font-size: 16px;
+  }
+
+  .empty-state-hint {
+    font-size: 14px;
+  }
+
+  /* Таблица */
+  .monitoring-table {
+    font-size: 13px;
+    min-width: 700px;
+    /* чтобы не сжималась слишком сильно */
+  }
+
+  .monitoring-table th,
+  .monitoring-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  /* Фиксируем ширину колонок примерно */
+  .monitoring-table th:nth-child(1) {
+    width: 70px;
+  }
+
+  /* категория */
+  .monitoring-table th:nth-child(2) {
+    width: 80px;
+  }
+
+  /* символ */
+  .monitoring-table th:nth-child(3) {
+    width: 70px;
+  }
+
+  /* старт цена */
+  .monitoring-table th:nth-child(4) {
+    width: 90px;
+  }
+
+  /* дата старта */
+  .monitoring-table th:nth-child(5) {
+    width: 80px;
+  }
+
+  /* текущая цена */
+  .monitoring-table th:nth-child(6) {
+    width: 70px;
+  }
+
+  /* цель */
+  .monitoring-table th:nth-child(7) {
+    width: 90px;
+  }
+
+  /* дата цели */
+  .monitoring-table th:nth-child(8) {
+    width: 80px;
+  }
+
+  /* статус */
+  .monitoring-table th:nth-child(9) {
+    width: 50px;
+  }
+
+  /* кнопка */
+
+  .price.current {
+    gap: 2px;
+  }
+
+  .price-diff {
+    font-size: 11px;
+  }
+
+  .status-badge {
+    font-size: 12px;
+    padding: 2px 4px;
+    min-width: 70px;
+  }
+
+  .delete-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    padding: 2px;
+  }
 }

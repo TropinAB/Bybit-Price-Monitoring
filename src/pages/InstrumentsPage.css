@@ -57,7 +57,7 @@
 }
 
 /* Таблица */
-.table-container {
+.instruments-table-container {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -79,7 +79,6 @@
   color: #495057;
   border-bottom: 2px solid #dee2e6;
   cursor: pointer;
-  /* user-select: none; */
 }
 
 .instruments-table th:hover {
@@ -129,14 +128,6 @@
   border-left: 3px solid #339af0;
 }
 
-/* Стили для колонки с кнопкой */
-.instruments-table td:first-child,
-.instruments-table th:first-child {
-  width: 40px;
-  text-align: center;
-  padding: 10px 5px;
-}
-
 .monitoring-price-btn {
   width: 28px;
   height: 28px;
@@ -160,6 +151,12 @@
 }
 
 /* колонки таблицы */
+.monitoring {
+  width: 40px;
+  text-align: center;
+  padding: 10px 5px;
+}
+
 .symbol {
   width: 30%;
 }
@@ -286,4 +283,117 @@
   justify-content: center;
   height: 200px;
   color: #868e96;
+}
+
+/* InstrumentsPage.css */
+@media (max-width: 768px) {
+  .instruments-container {
+    grid-template-columns: 1fr;
+    /* одна колонка */
+    gap: 2px;
+    padding: 2px 10px;
+    height: auto;
+    /* height: 600px; */
+  }
+
+  .instruments-table-container {
+    max-height: 300px;
+  }
+
+  /* Правая панель теперь под таблицей */
+  .instrument-details-section {
+    margin-top: 10px;
+    height: auto;
+    max-height: 400px;
+  }
+
+  /* Фильтры */
+  .filters-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 6px;
+    padding: 6px;
+  }
+
+  .filter-select {
+    /* flex: 1 1 calc(50% - 8px); */
+    min-width: 0;
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+
+  /* Первый select (категория) - 70% */
+  .filters-panel select:first-of-type {
+    flex: 0 0 calc(70% - 4px);
+  }
+
+  /* Второй select (базовая монета) - 30% */
+  .filters-panel select:last-of-type {
+    flex: 0 0 calc(30% - 4px);
+  }
+
+  .filters-panel input {
+    flex: 1 1 100%;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  /* Таблица */
+  .instruments-table {
+    font-size: 14px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .instruments-table th,
+  .instruments-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  /* Ширины колонок для мобильных (можно сделать относительными) */
+
+  .monitoring {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+
+  .symbol {
+    min-width: 80px;
+  }
+
+  .price,
+  .volume,
+  .percentage {
+    min-width: 70px;
+  }
+
+  /* Уменьшаем кнопку "+" */
+  .monitoring-price-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 22px;
+  }
+
+  /* Детальная информация */
+  .instrument-details h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .group-title {
+    font-size: 16px;
+  }
+
+  .detail-item .label,
+  .detail-item .value {
+    font-size: 14px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    /* один столбец для деталей */
+  }
 }

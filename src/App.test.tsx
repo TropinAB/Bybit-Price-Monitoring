@@ -122,7 +122,7 @@ describe("App", () => {
         container.querySelector(".instruments-table-section"),
       ).toBeInTheDocument();
       expect(container.querySelector(".filters-panel")).toBeInTheDocument();
-      expect(container.querySelector(".table-container")).toBeInTheDocument();
+      expect(container.querySelector(".instruments-table-container")).toBeInTheDocument();
       expect(
         container.querySelector(".instrument-details-section"),
       ).toBeInTheDocument();
