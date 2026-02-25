@@ -64,7 +64,7 @@ export function AppContent() {
         instrument &&
         instrument.lastPrice &&
         Math.sign(instrument.lastPrice - itemMD.targetPrice) ===
-          Math.sign(itemMD.targetPrice - itemMD.startPrice)
+        Math.sign(itemMD.targetPrice - itemMD.startPrice)
       ) {
         // пересечение уровня
         itemMD = { ...itemMD, targetDate: new Date() }; // копия

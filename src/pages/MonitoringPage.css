@@ -10,9 +10,8 @@
 .monitoring-header {
   order: 2;
   display: flex;
-  /* justify-content: space-between; */
   align-items: center;
-  margin-bottom: 12px;
+  margin: 3px 0px;
   background: white;
   padding: 12px 12px;
   border-radius: 8px;
@@ -92,7 +91,6 @@
   color: #495057;
   border-bottom: 2px solid #dee2e6;
   cursor: pointer;
-  /* z-index: 10; */
 }
 
 .monitoring-table td {
