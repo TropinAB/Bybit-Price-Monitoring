@@ -240,30 +240,6 @@ describe("Instruments", () => {
   });
 
   describe("Выбор строки (сценарий 9)", () => {
-    it("должен вызывать onChangeSelectedInstrument при клике на строку", async () => {
-      const user = userEvent.setup();
-
-      render(
-        <MemoryRouter>
-          <Instruments />
-        </MemoryRouter>,
-      );
-
-      // Находим строку по содержимому ячейки
-      const rows = screen.getAllByRole("row");
-      // Ищем строку, содержащую BTCUSDT
-      const btcRow = rows.find((row) => row.textContent?.includes("BTCUSDT"));
-
-      expect(btcRow).toBeDefined();
-      await user.click(btcRow!);
-
-      await waitFor(() => {
-        expect(mockOnChangeSelected).toHaveBeenCalled();
-      });
-
-      expect(mockOnChangeSelected).toHaveBeenCalledWith("BTCUSDT");
-    });
-
     it("должен подсвечивать выбранную строку", () => {
       const { rerender } = render(
         <MemoryRouter>

@@ -1,5 +1,5 @@
 import "./AppContent.css";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useParams } from "react-router";
 import { useBybit } from "../hooks/useBybit";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useEffect, useState } from "react";
@@ -20,6 +20,8 @@ const categories = new Map<string, string>([
 ]);
 
 export function AppContent() {
+  const params = useParams();
+  console.log("params", params);
   const [refreshInterval, setRefreshInterval] = useLocalStorage(
     "Bybit-Price-Monitoring:refreshInterval",
     0,
@@ -36,7 +38,9 @@ export function AppContent() {
     "Bybit-Price-Monitoring:monitoringData",
     [],
   );
-  const [selectedInstrument, setSelectedInstrument] = useState("");
+  const [selectedInstrument, setSelectedInstrument] = useState(
+    params.symbol || "",
+  );
   const {
     isOnline,
     error,
@@ -46,6 +50,11 @@ export function AppContent() {
   } = useBybit(refreshInterval, category, selectedInstrument);
   function handleIntervalChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRefreshInterval(Number(e.target.value));
+  }
+
+  if (params && (params.symbol || "") !== selectedInstrument) {
+    console.log("setSelectedInstrument", params.symbol, selectedInstrument);
+    setSelectedInstrument(params.symbol || "");
   }
 
   useEffect(() => {
@@ -145,7 +154,7 @@ export function AppContent() {
             baseCoin,
             onChangeBaseCoin: setBaseCoin,
             selectedInstrument,
-            onChangeSelectedInstrument: setSelectedInstrument,
+            // onChangeSelectedInstrument: setSelectedInstrument,
             isOnline,
             dataInstruments,
             dataInstrumentDetails,

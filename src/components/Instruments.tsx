@@ -1,4 +1,4 @@
-import { useOutletContext } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { BybitInstrument } from "../types/BybitInstruments";
 import { useMemo, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
@@ -24,31 +24,25 @@ const columns = [
 ];
 
 interface ContextType {
-  // refreshInterval: number;
-  // isOnline: boolean;
   category: string;
   onChangeCategory: (category: string) => void;
   baseCoin: string;
   onChangeBaseCoin: (category: string) => void;
   selectedInstrument: string;
-  onChangeSelectedInstrument: (category: string) => void;
   dataInstruments: BybitInstrument[];
   monitoringData: MonitoringData[];
   onChangeMonitoringData: (data: MonitoringData[]) => void;
 }
 
-interface InstrumentsProps {
-  onSelectInstrument?: (instrument: BybitInstrument) => void;
-}
+export function Instruments() {
+  const navigate = useNavigate();
 
-export function Instruments({ onSelectInstrument }: InstrumentsProps) {
   const {
     category,
     onChangeCategory,
     baseCoin,
     onChangeBaseCoin,
     selectedInstrument,
-    onChangeSelectedInstrument,
     dataInstruments,
     monitoringData,
     onChangeMonitoringData,
@@ -107,18 +101,17 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
   }
 
   function handleRowClick(instrument: BybitInstrument) {
-    onChangeSelectedInstrument(instrument.symbol);
-    if (onSelectInstrument) onSelectInstrument(instrument);
+    navigate(PREFIX + "details/" + instrument.symbol);
   }
 
   function handleChangeCategory(value: string) {
     onChangeCategory(value);
-    onChangeSelectedInstrument("");
+    navigate(PREFIX);
   }
 
   function handleChangeBaseCoin(value: string) {
     onChangeBaseCoin(value);
-    onChangeSelectedInstrument("");
+    navigate(PREFIX);
   }
 
   function handleSetMonitoringPrice(instrument: BybitInstrument) {
@@ -203,6 +196,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
               <th className="monitoring">{/* для кнопки */}</th>
               {columns.map((column) => (
                 <th
+                  key={column.id}
                   className={column.id === sortColumn ? sortDirection : ""}
                   onClick={() => handleSort(column.id)}
                 >

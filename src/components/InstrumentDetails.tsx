@@ -54,7 +54,8 @@ interface ContextType {
 }
 
 export function InstrumentDetails() {
-  const { dataInstrumentDetails: instrument } = useOutletContext<ContextType>();
+  const { selectedInstrument, dataInstrumentDetails: instrument } =
+    useOutletContext<ContextType>();
 
   // подгодовить структуру параметров
   function getGroups() {
@@ -95,7 +96,7 @@ export function InstrumentDetails() {
 
   return (
     <div className="instrument-details-section">
-      {instrument ? (
+      {selectedInstrument && instrument ? (
         <div className="instrument-details">
           <h2>{instrument.symbol}</h2>
           <div className="details-groups-container">{getGroups()}</div>

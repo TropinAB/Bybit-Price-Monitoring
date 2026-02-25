@@ -115,7 +115,7 @@ export function Monitoring() {
             <thead>
               <tr key="header">
                 {columns.map((column) => (
-                  <th>{column.name}</th>
+                  <th key={column.id}>{column.name}</th>
                 ))}
                 <th></th>
               </tr>
