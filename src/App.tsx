@@ -10,7 +10,7 @@ export function App() {
     <>
       <Routes>
         <Route element={<AppContent />}>
-          <Route index path={PREFIX} element={<InstrumentsPage />} />
+          <Route index element={<InstrumentsPage />} />
           <Route path={PREFIX + "monitoring"} element={<MonitoringPage />} />
           <Route path={PREFIX + "about"} element={<AboutPage />} />
         </Route>
