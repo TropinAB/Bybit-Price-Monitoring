@@ -164,7 +164,8 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
   return (
     <div className="instruments-table-section">
       <div className="filters-panel">
-        <select id="category"
+        <select
+          id="category"
           value={category}
           onChange={(e) => handleChangeCategory(e.target.value)}
           className="filter-select"
@@ -175,7 +176,8 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
             </option>
           ))}
         </select>
-        <select id="base-coin"
+        <select
+          id="base-coin"
           value={baseCoin}
           onChange={(e) => handleChangeBaseCoin(e.target.value)}
           className="filter-select"
@@ -186,7 +188,8 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
             </option>
           ))}
         </select>
-        <input id="symbol"
+        <input
+          id="symbol"
           type="text"
           value={filterSymbol}
           onChange={(e) => setFilterSymbol(e.target.value.toUpperCase())}
@@ -197,7 +200,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
         <table className="instruments-table">
           <thead>
             <tr key="header">
-              <th className="monitoring">{ /* для кнопки */}</th>
+              <th className="monitoring">{/* для кнопки */}</th>
               {columns.map((column) => (
                 <th
                   className={column.id === sortColumn ? sortDirection : ""}
@@ -210,13 +213,15 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
           </thead>
           <tbody>
             {preparedInstruments.map((instrument, index) => (
-              <tr key={index}
+              <tr
+                key={index}
                 onClick={() => handleRowClick(instrument)}
                 className={
                   selectedInstrument === instrument.symbol ? "selected" : ""
                 }
               >
-                <td className="monitoring"
+                <td
+                  className="monitoring"
                   onClick={
                     (e) => e.stopPropagation() /* остановить распространение */
                   }
@@ -242,8 +247,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
                   {formatPercentage(instrument.price24hPcnt)}
                 </td>
               </tr>
-            )
-            )}
+            ))}
           </tbody>
         </table>
       </div>
