@@ -75,7 +75,6 @@ export function Monitoring() {
           ),
       );
       onChangeMonitoringData(newData);
-      // onDeleteItem?.(symbol, startDate);
     }
   };
 
@@ -83,7 +82,6 @@ export function Monitoring() {
   const handleClearAll = () => {
     if (window.confirm("Вы уверены, что хотите очистить все записи?")) {
       onChangeMonitoringData([]);
-      //     onClearAll?.();
     }
   };
 
@@ -115,7 +113,7 @@ export function Monitoring() {
         <div className="table-container">
           <table className="monitoring-table">
             <thead>
-              <tr>
+              <tr key="header">
                 {columns.map((column) => (
                   <th>{column.name}</th>
                 ))}

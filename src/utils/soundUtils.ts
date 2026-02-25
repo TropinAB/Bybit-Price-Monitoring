@@ -1,39 +1,3 @@
-// soundUtils.ts
-export const playTargetReachedSound = () => {
-  try {
-    // Создаем простой beep через Web Audio API
-    const audioContext = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // Нота Ля
-    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.01,
-      audioContext.currentTime + 0.5,
-    );
-
-    oscillator.start();
-    oscillator.stop(audioContext.currentTime + 0.5);
-  } catch (error) {
-    console.log("Звуковое оповещение не поддерживается");
-  }
-};
-
-// Альтернатива с использованием простого Audio
-export const playSimpleBeep = () => {
-  const audio = new Audio();
-  audio.src =
-    "data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-  audio.volume = 0.3;
-  audio.play().catch(() => console.log("Автовоспроизведение заблокировано"));
-};
-
-// soundUtils.ts
 export const playBellSound = () => {
   try {
     const audioContext = new (window.AudioContext ||

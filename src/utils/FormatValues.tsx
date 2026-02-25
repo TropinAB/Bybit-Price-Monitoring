@@ -1,6 +1,6 @@
 export function numberWithSpaces(value: number, digits: number = 0) {
   const parts: string[] = value
-    .toFixed(digits || 15)
+    .toFixed(digits || 14)
     .replace(".", ",")
     .split(",");
   if (parts[0]) parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -18,17 +18,17 @@ export function formatPrice(price: number | null) {
 
 export function formatVolume(volume: number | null) {
   if (volume === null) return "-";
-  if (volume > 1_000_000) return `${numberWithSpaces(volume / 1_000_000, 3)}M`;
-  if (volume > 1_000) return `${numberWithSpaces(volume / 1_000, 3)}K`;
+  if (Math.abs(volume) >= 1_000_000)
+    return `${numberWithSpaces(volume / 1_000_000, 3)}M`;
+  if (Math.abs(volume) >= 1_000)
+    return `${numberWithSpaces(volume / 1_000, 3)}K`;
   return numberWithSpaces(volume, 3);
 }
 
 export function formatPercentage(value: number | null) {
-  if (value === null) return "-";
+  if (value === null) return <p>-</p>;
   const className = value >= 0 ? "positive" : "negative";
-  return (
-    <span className={className}> {numberWithSpaces(value * 100, 2)}% </span>
-  );
+  return <span className={className}>{numberWithSpaces(value * 100, 2)}%</span>;
 }
 
 // Форматирование даты

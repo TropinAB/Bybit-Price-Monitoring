@@ -5,7 +5,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import { MonitoringData } from "../types/MonitoringData";
 import { BybitInstrument } from "../types/BybitInstruments";
-import toast, { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { playBellSound } from "../utils/soundUtils";
 
 const menuItems = [

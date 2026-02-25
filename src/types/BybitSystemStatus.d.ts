@@ -1,4 +1,4 @@
-interface BybitSystemStatus {
+export interface BybitSystemStatus {
   id: string;
   title: string;
   state: string; // scheduled/ongoing/completed/canceled

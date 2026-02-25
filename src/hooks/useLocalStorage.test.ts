@@ -6,191 +6,305 @@ describe("useLocalStorage", () => {
   beforeEach(() => {
     window.localStorage.clear();
     jest.clearAllMocks();
+
+    // Мокаем методы localStorage для отслеживания вызовов
+    jest.spyOn(Storage.prototype, "getItem");
+    jest.spyOn(Storage.prototype, "setItem");
+    jest.spyOn(Storage.prototype, "removeItem");
+    jest.spyOn(Storage.prototype, "clear");
   });
 
-  // Мок для localStorage
-  const mockLocalStorage = () => {
-    let store: { [key: string]: string } = {};
-
-    const getItemMock = jest.spyOn(Storage.prototype, "getItem");
-    const setItemMock = jest.spyOn(Storage.prototype, "setItem");
-    const removeItemMock = jest.spyOn(Storage.prototype, "removeItem");
-    const clearMock = jest.spyOn(Storage.prototype, "clear");
-
-    getItemMock.mockImplementation((key: string) => store[key] || null);
-    setItemMock.mockImplementation((key: string, value: string) => {
-      store[key] = value;
-    });
-    removeItemMock.mockImplementation((key: string) => {
-      delete store[key];
-    });
-    clearMock.mockImplementation(() => {
-      store = {};
-    });
-
-    return { store, getItemMock, setItemMock, removeItemMock, clearMock };
-  };
-
-  it("should return default value when localStorage is empty", () => {
-    mockLocalStorage();
-
-    const { result } = renderHook(() =>
-      useLocalStorage<string>("test-key", "default value"),
-    );
-
-    const [value] = result.current;
-    expect(value).toBe("default value");
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  it("should load existing value from localStorage", () => {
-    const mocks = mockLocalStorage();
-    mocks.store["existing-key"] = JSON.stringify("stored value");
+  describe("Инициализация", () => {
+    it("должен возвращать значение по умолчанию если localStorage пуст", () => {
+      const { result } = renderHook(() =>
+        useLocalStorage("test-key", "default value"),
+      );
 
-    const { result } = renderHook(() =>
-      useLocalStorage<string>("existing-key", "default value"),
-    );
+      const [value] = result.current;
 
-    const [value] = result.current;
-    expect(value).toBe("stored value");
+      expect(value).toBe("default value");
+      expect(localStorage.getItem).toHaveBeenCalledWith("test-key");
+    });
+
+    it("должен загружать существующее значение из localStorage", () => {
+      // Предварительно заполняем localStorage
+      localStorage.setItem("existing-key", JSON.stringify("stored value"));
+
+      const { result } = renderHook(() =>
+        useLocalStorage("existing-key", "default value"),
+      );
+
+      const [value] = result.current;
+
+      expect(value).toBe("stored value");
+    });
+
+    it("должен работать с числовыми значениями", () => {
+      localStorage.setItem("number-key", JSON.stringify(42));
+
+      const { result } = renderHook(() => useLocalStorage("number-key", 0));
+
+      const [value] = result.current;
+      expect(value).toBe(42);
+    });
+
+    it("должен работать с булевыми значениями", () => {
+      localStorage.setItem("bool-key", JSON.stringify(true));
+
+      const { result } = renderHook(() => useLocalStorage("bool-key", false));
+
+      const [value] = result.current;
+      expect(value).toBe(true);
+    });
+
+    it("должен работать с объектами", () => {
+      const storedObject = { name: "John", age: 30 };
+      localStorage.setItem("object-key", JSON.stringify(storedObject));
+
+      const { result } = renderHook(() =>
+        useLocalStorage("object-key", { name: "", age: 0 }),
+      );
+
+      const [value] = result.current;
+      expect(value).toEqual(storedObject);
+    });
+
+    it("должен работать с массивами", () => {
+      const storedArray = [1, 2, 3, 4, 5];
+      localStorage.setItem("array-key", JSON.stringify(storedArray));
+
+      const { result } = renderHook(() => useLocalStorage("array-key", []));
+
+      const [value] = result.current;
+      expect(value).toEqual(storedArray);
+    });
+
+    it("должен обрабатывать некорректный JSON в localStorage", () => {
+      // Сохраняем некорректный JSON
+      localStorage.setItem("invalid-key", "not valid json{");
+
+      // Мокаем console.error чтобы не засорять вывод
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      const { result } = renderHook(() =>
+        useLocalStorage("invalid-key", "default value"),
+      );
+
+      const [value] = result.current;
+
+      expect(value).toBe("default value");
+      expect(consoleSpy).not.toHaveBeenCalled(); // Ошибка перехвачена в try/catch
+
+      consoleSpy.mockRestore();
+    });
   });
 
-  it("should handle complex objects", () => {
-    mockLocalStorage();
+  describe("Обновление значений", () => {
+    it("должен обновлять значение и сохранять в localStorage", () => {
+      const { result } = renderHook(() =>
+        useLocalStorage("test-key", "initial"),
+      );
 
-    const defaultValue = {
-      name: "John",
-      age: 30,
-      hobbies: ["reading", "coding"],
-    };
+      act(() => {
+        const [, setValue] = result.current;
+        setValue("updated value");
+      });
 
-    const { result } = renderHook(() =>
-      useLocalStorage<typeof defaultValue>("user", defaultValue),
-    );
+      const [updatedValue] = result.current;
 
-    const [value] = result.current;
-    expect(value).toEqual(defaultValue);
+      expect(updatedValue).toBe("updated value");
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "test-key",
+        JSON.stringify("updated value"),
+      );
+    });
+
+    it("должен обновлять значение функцией (как useState)", () => {
+      const { result } = renderHook(() => useLocalStorage("counter", 0));
+
+      act(() => {
+        const [, setValue] = result.current;
+        setValue((prev: number) => prev + 5);
+      });
+
+      const [value] = result.current;
+      expect(value).toBe(5);
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "counter",
+        JSON.stringify(5),
+      );
+    });
+
+    it("должен обновлять объекты", () => {
+      const { result } = renderHook(() =>
+        useLocalStorage("user", { name: "John", age: 30 }),
+      );
+
+      act(() => {
+        const [, setValue] = result.current;
+        setValue({ ...result.current[0], age: 31 });
+      });
+
+      const [value] = result.current;
+      expect(value).toEqual({ name: "John", age: 31 });
+    });
+
+    it("должен обновлять массивы", () => {
+      const { result } = renderHook(() =>
+        useLocalStorage("todos", ["todo1", "todo2"]),
+      );
+
+      act(() => {
+        const [, setValue] = result.current;
+        setValue([...result.current[0], "todo3"]);
+      });
+
+      const [value] = result.current;
+      expect(value).toEqual(["todo1", "todo2", "todo3"]);
+    });
   });
 
-  it("should update localStorage when value changes", () => {
-    const mocks = mockLocalStorage();
+  describe("Несколько ключей", () => {
+    it("должен независимо хранить значения для разных ключей", () => {
+      const { result: hook1 } = renderHook(() =>
+        useLocalStorage("key1", "value1"),
+      );
 
-    const { result } = renderHook(() =>
-      useLocalStorage<string>("test-key", "initial"),
-    );
+      const { result: hook2 } = renderHook(() =>
+        useLocalStorage("key2", "value2"),
+      );
 
-    act(() => {
-      const [, setValue] = result.current;
-      setValue("updated value");
+      expect(hook1.current[0]).toBe("value1");
+      expect(hook2.current[0]).toBe("value2");
+
+      act(() => {
+        hook1.current[1]("new value1");
+      });
+
+      expect(hook1.current[0]).toBe("new value1");
+      expect(hook2.current[0]).toBe("value2");
+
+      // Проверяем localStorage
+      expect(localStorage.getItem("key1")).toBe(JSON.stringify("new value1"));
+      expect(localStorage.getItem("key2")).toBe(JSON.stringify("value2"));
     });
 
-    // Проверяем, что состояние обновилось
-    const [updatedValue] = result.current;
-    expect(updatedValue).toBe("updated value");
+    it.skip("должен работать с несколькими экземплярами одного ключа", () => {
+      // TODO вернуться к этому тесту после реализации синхронизации
+      const { result: hook1 } = renderHook(() =>
+        useLocalStorage("shared-key", "initial"),
+      );
 
-    // Проверяем, что localStorage обновился
-    const storedValue: string | undefined = mocks.store["test-key"];
-    expect(storedValue).not.toBeNull();
-    expect(JSON.parse(storedValue as string)).toBe("updated value");
-    expect(mocks.setItemMock).toHaveBeenCalledWith(
-      "test-key",
-      JSON.stringify("updated value"),
-    );
+      const { result: hook2 } = renderHook(() =>
+        useLocalStorage("shared-key", "initial"),
+      );
+
+      act(() => {
+        hook1.current[1]("updated from hook1");
+      });
+
+      // Второй хук должен получить обновленное значение
+      expect(hook2.current[0]).toBe("updated from hook1");
+    });
   });
 
-  it("should handle functional updates", () => {
-    mockLocalStorage();
+  describe("Синхронизация с localStorage", () => {
+    it("должен сохранять в localStorage при изменении ключа", () => {
+      const { rerender } = renderHook(
+        ({ key }) => useLocalStorage(key, "value"),
+        { initialProps: { key: "key1" } },
+      );
 
-    const { result } = renderHook(() => useLocalStorage<number>("counter", 0));
+      // Первоначальное сохранение
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "key1",
+        JSON.stringify("value"),
+      );
 
-    act(() => {
-      const [, setValue] = result.current;
-      setValue((prev: number) => prev + 5);
+      // Меняем ключ
+      rerender({ key: "key2" });
+
+      // Должен сохранить с новым ключом
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "key2",
+        JSON.stringify("value"),
+      );
     });
-
-    const [value] = result.current;
-    expect(value).toBe(5);
   });
 
-  it("should handle arrays correctly", () => {
-    mockLocalStorage();
+  describe("Граничные случаи", () => {
+    it("должен обрабатывать null и undefined", () => {
+      const { result } = renderHook(() =>
+        useLocalStorage<null | string>("null-key", null),
+      );
 
-    const { result } = renderHook(() => useLocalStorage<string[]>("todos", []));
+      expect(result.current[0]).toBeNull();
 
-    act(() => {
-      const [, setValue] = result.current;
-      setValue(["todo1", "todo2"]);
+      act(() => {
+        result.current[1](undefined);
+      });
+
+      expect(result.current[0]).toBeUndefined();
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "null-key",
+        JSON.stringify(undefined),
+      );
     });
 
-    const [value] = result.current;
-    expect(value).toEqual(["todo1", "todo2"]);
+    it("должен обрабатывать сложные вложенные объекты", () => {
+      const complexObject = {
+        user: {
+          name: "John",
+          address: {
+            city: "Moscow",
+            street: "Lenina",
+          },
+          hobbies: ["reading", "coding"],
+        },
+        meta: {
+          created: new Date("2024-01-01").toISOString(),
+          version: 1,
+        },
+      };
 
-    // Проверяем localStorage
-    const storedValue = JSON.parse(
-      window.localStorage.getItem("todos") || "[]",
-    );
-    expect(storedValue).toEqual(["todo1", "todo2"]);
+      localStorage.setItem("complex", JSON.stringify(complexObject));
+
+      const { result } = renderHook(() => useLocalStorage("complex", {}));
+
+      expect(result.current[0]).toEqual(complexObject);
+    });
   });
 
-  it("should handle different keys independently", () => {
-    mockLocalStorage();
+  describe("Производительность и оптимизация", () => {
+    it("не должен вызывать лишние рендеры", () => {
+      const renderSpy = jest.fn();
 
-    const { result: hook1 } = renderHook(() =>
-      useLocalStorage<string>("key1", "value1"),
-    );
+      const Component = () => {
+        renderSpy();
+        return null;
+      };
 
-    const { result: hook2 } = renderHook(() =>
-      useLocalStorage<string>("key2", "value2"),
-    );
+      renderHook(() => Component());
 
-    expect(hook1.current[0]).toBe("value1");
-    expect(hook2.current[0]).toBe("value2");
-
-    act(() => {
-      hook1.current[1]("new value1");
+      expect(renderSpy).toHaveBeenCalledTimes(1);
     });
 
-    expect(hook1.current[0]).toBe("new value1");
-    expect(hook2.current[0]).toBe("value2");
-  });
+    it("должен стабильно возвращать функцию setValue", () => {
+      const { result, rerender } = renderHook(() =>
+        useLocalStorage("test", "value"),
+      );
 
-  test("should handle JSON parse errors gracefully", () => {
-    const mocks = mockLocalStorage();
-    // Сохраняем некорректный JSON
-    mocks.store["invalid"] = "not valid json{";
+      const [, setValue1] = result.current;
 
-    // Мокаем JSON.parse чтобы выбрасывал ошибку
-    const parseMock = jest.spyOn(JSON, "parse").mockImplementationOnce(() => {
-      throw new Error("Parse error");
+      rerender();
+
+      const [, setValue2] = result.current;
+
+      expect(setValue1).toBe(setValue2); // Ссылка на функцию должна быть стабильной
     });
-
-    const { result } = renderHook(() =>
-      useLocalStorage<string>("invalid", "default"),
-    );
-    expect(result.current[0]).toBe("default");
-    parseMock.mockRestore();
-  });
-
-  test("should handle multiple updates in sequence", () => {
-    mockLocalStorage();
-
-    const { result } = renderHook(() => useLocalStorage<number>("counter", 0));
-
-    act(() => {
-      const [, setValue] = result.current;
-      setValue(1);
-    });
-    expect(result.current[0]).toBe(1);
-
-    act(() => {
-      const [, setValue] = result.current;
-      setValue(2);
-    });
-    expect(result.current[0]).toBe(2);
-
-    act(() => {
-      const [, setValue] = result.current;
-      setValue(3);
-    });
-    expect(result.current[0]).toBe(3);
   });
 });

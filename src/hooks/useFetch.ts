@@ -35,7 +35,6 @@ export function useFetch<T = any, R = any>(
       const transformedData: R = option.dataSelector
         ? option.dataSelector(result)
         : (result as unknown as R);
-
       setData(transformedData);
     } catch (error) {
       if (error instanceof Error) {

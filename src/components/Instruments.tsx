@@ -196,7 +196,7 @@ export function Instruments({ onSelectInstrument }: InstrumentsProps) {
       <div className="table-container">
         <table className="instruments-table">
           <thead>
-            <tr>
+            <tr key="header">
               <th>{/* для кнопки */}</th>
               {columns.map((column) => (
                 <th

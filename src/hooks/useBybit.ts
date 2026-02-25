@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFetch } from "./useFetch";
 import { BybitResponse } from "../types/BybitResponse";
-import { BybitSystemStatuses } from "../types/BybitSystemStatus";
+import {
+  BybitSystemStatus,
+  BybitSystemStatuses,
+} from "../types/BybitSystemStatus";
 import { BybitInstrument, BybitInstruments } from "../types/BybitInstruments";
 import {
   BybitInstrumentInfo,
@@ -11,7 +14,7 @@ import {
 // category: spot/linear/inverse/option
 export function useBybit(
   intervalMinutes: number = 1,
-  category: string = "spot",
+  category: string = "",
   symbol: string = "",
 ) {
   const intervalMS = intervalMinutes * 60 * 1000;
@@ -57,7 +60,7 @@ export function useBybit(
   function InstrumentsSelector(
     response: BybitResponse<BybitInstruments>,
   ): BybitInstrument[] {
-    if (!response.result?.list) return [];
+    if (!response.result?.list || response.result?.list.length === 0) return [];
     return response.result.list.map((item) => ({
       category: response.result.category,
       symbol: item.symbol,
@@ -67,7 +70,6 @@ export function useBybit(
       price24hPcnt: Number(item.price24hPcnt),
     }));
   }
-
   // Запрос детализации по Инструменту
   const {
     // loading: loadingInstruments,
@@ -153,13 +155,31 @@ export function useBybit(
     refetchState();
   }, [triggerState]);
 
+  // обработать ошибки
   useEffect(() => {
-    // обработать ошибки
-    if (errorState) {
-      setIsOnline(false);
-      setError(errorState);
+    if (
+      errorState ||
+      errorInstrumentsSpot ||
+      errorInstrumentsLinear ||
+      errorInstrumentDetails
+    ) {
+      errorState && setIsOnline(false);
+      const error = [
+        errorState,
+        errorInstrumentsSpot,
+        errorInstrumentsLinear,
+        errorInstrumentDetails,
+      ]
+        .filter((error) => !!error)
+        .join(", ");
+      setError(error);
     }
-  }, [errorState]);
+  }, [
+    errorState,
+    errorInstrumentsSpot,
+    errorInstrumentsLinear,
+    errorInstrumentDetails,
+  ]);
 
   useEffect(() => {
     // обработать статус сервера
@@ -168,36 +188,18 @@ export function useBybit(
     if (dataState.result && dataState.result.list) {
       if (dataState.result.list.length === 0) {
         setIsOnline(true);
-        setError("");
         // Запрос перечня Инструментов
         refetchInstrumentsSpot();
         refetchInstrumentsLinear();
       } else {
+        const state = dataState.result.list
+          .map((item: BybitSystemStatus) => item.title)
+          .join(", ");
+        setError(state);
         setIsOnline(false);
-        // TODO сделать обработку ответов о профработах
       }
     }
   }, [dataState]);
-
-  useEffect(() => {
-    // обработать ошибки
-    errorInstrumentsSpot && setError(errorInstrumentsSpot);
-  }, [errorInstrumentsSpot]);
-
-  useEffect(() => {
-    // обработать ошибки
-    dataInstrumentsSpot && setError("");
-  }, [dataInstrumentsSpot]);
-
-  useEffect(() => {
-    // обработать ошибки
-    errorInstrumentsLinear && setError(errorInstrumentsLinear);
-  }, [errorInstrumentsLinear]);
-
-  useEffect(() => {
-    // обработать ошибки
-    dataInstrumentsLinear && setError("");
-  }, [dataInstrumentsLinear]);
 
   useEffect(() => {
     // запрос статуса сервера
@@ -205,16 +207,6 @@ export function useBybit(
       refetchInstrumentDetails();
     }
   }, [isOnline, category, symbol]);
-
-  useEffect(() => {
-    // обработать ошибки
-    errorInstrumentDetails && setError(errorInstrumentDetails);
-  }, [errorInstrumentDetails]);
-
-  useEffect(() => {
-    // обработать ошибки
-    dataInstrumentDetails && setError("");
-  }, [dataInstrumentDetails]);
 
   let dataInstruments: BybitInstrument[] = [
     ...(dataInstrumentsSpot || []),
