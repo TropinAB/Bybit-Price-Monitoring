@@ -105,7 +105,12 @@ export function AppContent() {
         <div className="menu-container">
           <nav>
             {menuItems.map((item, index) => (
-              <NavLink key={index} to={item.path} className="menu-item border">
+              <NavLink
+                key={index}
+                to={item.path}
+                end={item.path === PREFIX}
+                className="menu-item border"
+              >
                 {item.name}
               </NavLink>
             ))}
