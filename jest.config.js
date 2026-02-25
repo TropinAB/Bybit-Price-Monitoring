@@ -23,9 +23,10 @@ const config = {
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
   collectCoverageFrom: [
-    "src/**/*.{ts,tsx}",
+    "src/**/*.{ts,tsx,js,jsx}",
     '!src/**/*.d.ts',
     "!src/index.ts",
+    "!src/index.tsx",
     "!**/node_modules/**",
   ],
 
@@ -93,15 +94,15 @@ const config = {
   // An array of file extensions your modules use
   moduleFileExtensions: [
     "js",
-  //   "mjs",
-  //   "cjs",
-  //   "jsx",
+    //   "mjs",
+    //   "cjs",
+    "jsx",
     "ts",
-  //   "mts",
-  //   "cts",
-  //   "tsx",
+    //   "mts",
+    //   "cts",
+    "tsx",
     "json",
-  //   "node"
+    //   "node"
   ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
@@ -150,9 +151,11 @@ const config = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   // setupFiles: [],
+  // setupFiles: ['<rootDir>/src/setupTests.ts'],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -171,8 +174,9 @@ const config = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-  //   "**/__tests__/**/*.?([mc])[jt]s?(x)",
-    "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"
+    //   "**/__tests__/**/*.?([mc])[jt]s?(x)",
+    "**/?(*.)+(spec|test).?([mc])[jt]s?(x)",
+    // "<rootDir>/src/**/*.test.{js,jsx,ts,tsx}",
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
@@ -191,7 +195,8 @@ const config = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    // '^.+\\.ts$': 'ts-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
@@ -199,6 +204,9 @@ const config = {
   //   "\\\\node_modules\\\\",
   //   "\\.pnp\\.[^\\\\]+$"
   // ],
+  transformIgnorePatterns: [
+    "node_modules/(?!(react-router|react-router-dom)/)"
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
@@ -214,6 +222,11 @@ const config = {
 
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+  },
+
+  prettierPath: null, // Отключить использование Prettier для snapshot'ов
+  snapshotFormat: {
+    printBasicPrototype: false,
   },
 };
 

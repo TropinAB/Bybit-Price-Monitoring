@@ -1,7 +1,7 @@
 {
-  "name": "ts-template",
+  "name": "bybit-price-monitoring",
   "version": "1.0.0",
-  "description": "TS-Template",
+  "description": "Bybit-Price-Monitoring",
   "private": true,
   "scripts": {
     "build": "set NODE_ENV='production' && webpack --mode=production",
@@ -15,26 +15,36 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TropinAB/TS-Template.git"
+    "url": "git+https://github.com/TropinAB/Bybit-Price-Monitoring.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TropinAB/TS-Template/issues"
+    "url": "https://github.com/TropinAB/Bybit-Price-Monitoring/issues"
   },
-  "homepage": "https://github.com/TropinAB/TS-Template#readme",
+  "homepage": "https://github.com/TropinAB/Bybit-Price-Monitoring#readme",
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
     "@eslint/css": "^0.14.1",
     "@eslint/js": "^9.39.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "babel-jest": "^30.2.0",
+    "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.2.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",
     "html-webpack-plugin": "^5.6.6",
     "husky": "^9.1.7",
@@ -54,5 +64,10 @@
   "lint-staged": {
     "*.{js,ts}": "eslint --fix",
     "*.{js,ts,css,md,yml,html}": "prettier --write"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router": "^7.13.0"
   }
 }
