@@ -1,0 +1,269 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.header {
+  font-size: 52px;
+  color: #007bff;
+  text-align: center;
+  margin: 10px;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.menu-nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.menu-item {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #007bff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.menu-item:hover {
+  background-color: #00bbff;
+  color: white;
+}
+
+.menu-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.refresh-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.refresh-label {
+  font-size: 0.9rem;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.refresh-select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.refresh-select:hover {
+  border-color: #007bff;
+}
+
+.refresh-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.main-content {
+  flex: 1;
+  padding: 10px;
+  border-top: 1px solid #e9ecef;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Footer */
+.app-footer {
+  background: white;
+  border-top: 1px solid #e9ecef;
+  padding: 12px 24px;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-size: 14px;
+  color: #495057;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Статус сервера */
+.server-status,
+.update-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-label,
+.time-label {
+  color: #868e96;
+  font-weight: 500;
+}
+
+.status-value {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.status-value.online {
+  color: #40c057;
+  background: #ebfbee;
+}
+
+.status-value.offline {
+  color: #fa5252;
+  background: #fff5f5;
+}
+
+.time-value {
+  font-family: "Monaco", "Menlo", monospace;
+  color: #1971c2;
+  font-weight: 500;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff5f5;
+  border-left: 3px solid #fa5252;
+  padding: 6px 12px;
+  border-radius: 4px;
+  max-width: 500px;
+  animation: slideIn 0.3s ease;
+}
+
+.error-icon {
+  font-size: 16px;
+  animation: pulse 2s infinite;
+}
+
+.error-text {
+  color: #e03131;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.error-message:hover .error-text {
+  white-space: normal;
+  word-break: break-all;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .header {
+    font-size: 26px;
+    color: #007bff;
+    text-align: center;
+    margin: 5px;
+  }
+
+  .menu-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .menu-nav {
+    justify-content: space-around;
+    gap: 0.3rem;
+  }
+
+  .menu-item {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0.4rem 0.2rem;
+    font-size: 0.9rem;
+  }
+
+  .refresh-control {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0px;
+  }
+
+  .refresh-label {
+    font-size: 0.9rem;
+  }
+
+  .refresh-select {
+    width: 100%;
+    max-width: 200px;
+    /* padding: 0px; */
+  }
+
+  .main-content {
+    padding: 0px;
+  }
+
+  .app-footer {
+    padding: 2px;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0px;
+    font-size: 12px;
+  }
+
+  .footer-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .server-status,
+  .update-time {
+    flex-wrap: wrap;
+  }
+
+  .error-message {
+    max-width: 100%;
+    padding: 4px 8px;
+  }
+
+  .error-text {
+    font-size: 12px;
+  }
+}

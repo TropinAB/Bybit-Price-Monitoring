@@ -1,0 +1,378 @@
+.monitoring-container {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  box-sizing: border-box;
+}
+
+.monitoring-header {
+  order: 2;
+  display: flex;
+  align-items: center;
+  margin: 3px 0px;
+  background: white;
+  padding: 12px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.clear-all-btn {
+  margin-left: auto;
+  padding: 10px 20px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.clear-all-btn:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.clear-all-btn:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+  color: #9e9e9e;
+}
+
+/* Пустое состояние */
+.empty-state {
+  background: white;
+  border-radius: 8px;
+  padding: 48px;
+  text-align: center;
+  color: #868e96;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.empty-state-hint {
+  font-size: 16px;
+  color: #adb5bd;
+}
+
+/* Таблица */
+.table-container {
+  order: 1;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.monitoring-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.monitoring-table th {
+  position: relative;
+  top: 0;
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  cursor: pointer;
+}
+
+.monitoring-table td {
+  padding: 4px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Подсветка достигнутых целей */
+.monitoring-table tr.target-reached {
+  background-color: #f0f9f0;
+  border-left: 4px solid #40c057;
+}
+
+.monitoring-table tr.target-reached td {
+  color: #2b8a3e;
+}
+
+/* Колонка символа */
+.instrument {
+  font-weight: 600;
+  color: #1971c2;
+}
+
+/* Цены */
+.price {
+  font-family: "Monaco", "Menlo", monospace;
+  font-weight: 500;
+  text-align: center;
+  width: 20%;
+}
+
+.price.current {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+.price.current.above {
+  color: #40c057;
+}
+
+.price.current.below {
+  color: #fa5252;
+}
+
+.price.current .price-diff {
+  text-align: center;
+  width: 100%;
+}
+
+.price-diff {
+  font-size: 14px;
+  color: #868e96;
+  font-weight: normal;
+}
+
+.price.target {
+  text-align: center;
+  color: #e8590c;
+}
+
+/* Даты */
+.date {
+  text-align: center;
+  color: #495057;
+  font-size: 16px;
+}
+
+/* Статус */
+.monitoring-table td .status-badge {
+  margin: 0 auto;
+  display: table;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  align-items: center;
+  min-width: 100px;
+}
+
+.status-badge.success {
+  background: #d3f9d8;
+  color: #2b8a3e;
+}
+
+.status-badge.pending {
+  background: #fff3bf;
+  color: #e67700;
+}
+
+/* Кнопка удаления */
+.delete-btn {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  background: #fff5f5;
+  transform: scale(1.2);
+}
+
+/* Статистика */
+.monitoring-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  background: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  color: #868e96;
+  font-size: 16px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.stat-value.success {
+  color: #40c057;
+}
+
+.stat-value.pending {
+  color: #fab005;
+}
+
+/* Стилизация скролла */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* MonitoringPage.css */
+@media (max-width: 768px) {
+  .monitoring-container {
+    padding: 2px;
+  }
+
+  .monitoring-header {
+    padding: 10px 0px 0px 0px;
+    margin-bottom: 8px;
+  }
+
+  .clear-all-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+    gap: 4px;
+  }
+
+  .empty-state {
+    padding: 24px;
+  }
+
+  .empty-state p {
+    font-size: 16px;
+  }
+
+  .empty-state-hint {
+    font-size: 14px;
+  }
+
+  /* Таблица */
+  .monitoring-table {
+    font-size: 13px;
+    min-width: 700px;
+    /* чтобы не сжималась слишком сильно */
+  }
+
+  .monitoring-table th,
+  .monitoring-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  /* Фиксируем ширину колонок примерно */
+  .monitoring-table th:nth-child(1) {
+    width: 70px;
+  }
+
+  /* категория */
+  .monitoring-table th:nth-child(2) {
+    width: 80px;
+  }
+
+  /* символ */
+  .monitoring-table th:nth-child(3) {
+    width: 70px;
+  }
+
+  /* старт цена */
+  .monitoring-table th:nth-child(4) {
+    width: 90px;
+  }
+
+  /* дата старта */
+  .monitoring-table th:nth-child(5) {
+    width: 80px;
+  }
+
+  /* текущая цена */
+  .monitoring-table th:nth-child(6) {
+    width: 70px;
+  }
+
+  /* цель */
+  .monitoring-table th:nth-child(7) {
+    width: 90px;
+  }
+
+  /* дата цели */
+  .monitoring-table th:nth-child(8) {
+    width: 80px;
+  }
+
+  /* статус */
+  .monitoring-table th:nth-child(9) {
+    width: 50px;
+  }
+
+  /* кнопка */
+
+  .price.current {
+    gap: 2px;
+  }
+
+  .price-diff {
+    font-size: 11px;
+  }
+
+  .status-badge {
+    font-size: 12px;
+    padding: 2px 4px;
+    min-width: 70px;
+  }
+
+  .delete-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    padding: 2px;
+  }
+}
